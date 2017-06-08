@@ -1,0 +1,6 @@
+[run]
+branch = True
+source = sphinx_feature_classification
+
+[report]
+ignore_errors = True
