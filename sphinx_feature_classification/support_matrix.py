@@ -131,12 +131,12 @@ class Matrix(object):
 class Feature(object):
     STATUS_CHOICE = "choice"
     STATUS_CONDITION = "condition"
-    STATUS_REQUIRED = "required"
+    STATUS_MANDATORY = "mandatory"
     STATUS_OPTIONAL = "optional"
     STATUS_MATURE = "mature"
     STATUS_IMMATURE = "immature"
 
-    STATUS_ALL = [STATUS_REQUIRED, STATUS_OPTIONAL, STATUS_CHOICE,
+    STATUS_ALL = [STATUS_MANDATORY, STATUS_OPTIONAL, STATUS_CHOICE,
                   STATUS_CONDITION, STATUS_MATURE, STATUS_IMMATURE]
 
     def __init__(self, key, title, status=STATUS_OPTIONAL,
@@ -155,19 +155,19 @@ class Feature(object):
 class Implementation(object):
     STATUS_COMPLETE = "complete"
     STATUS_PARTIAL = "partial"
-    STATUS_INCOMPLETE = "incomplete"
+    STATUS_MISSING = "missing"
     STATUS_UNKNOWN = "unknown"
 
-    STATUS_ALL = [STATUS_COMPLETE, STATUS_INCOMPLETE,
+    STATUS_ALL = [STATUS_COMPLETE, STATUS_MISSING,
                   STATUS_PARTIAL, STATUS_UNKNOWN]
 
-    def __init__(self, status=STATUS_INCOMPLETE):
+    def __init__(self, status=STATUS_MISSING):
         self.status = status
 
 
 STATUS_SYMBOLS = {
     Implementation.STATUS_COMPLETE: u"\u2714",
-    Implementation.STATUS_INCOMPLETE: u"\u2716",
+    Implementation.STATUS_MISSING: u"\u2716",
     Implementation.STATUS_PARTIAL: u"\u2714",
     Implementation.STATUS_UNKNOWN: u"?"
 }
