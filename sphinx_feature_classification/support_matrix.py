@@ -121,9 +121,8 @@ class Matrix(object):
                 if not option.startswith(DRIVER_PREFIX):
                     continue
 
-                implementation = _process_implementation(section, option,
-                                                         feature)
-                features.append(implementation)
+                _process_implementation(section, option, feature)
+            features.append(feature)
 
         return features
 
