@@ -37,7 +37,9 @@ Documenting Your Drivers
   link=https://docs.openstack.org/foo/latest/some-fast-driver-doc
 
 
-3. Next we'll create a feature section to show which drivers support it.
+3. Next we'll create a couple of feature sections to show which drivers support
+   them. Notice that a driver is only required to implement detach-volume if
+   they completed implementing attach-volume.
 
 .. code-block:: INI
 
@@ -46,7 +48,16 @@ Documenting Your Drivers
   status=optional
   notes=The attach volume operation provides a means to hotplug
   additional block storage to a running instance.
-  cli=nova volume-attach <server> <volume>
+  cli=my-project attach-volume <instance> <volume>
+  driver-slow-driver=complete
+  driver-fast-driver=complete
+
+  [operation.detach-volume]
+  title=Detach block volume from instance
+  status=condition(operation.attach-volume==complete)
+  notes=The detach volume operation provides a means to remove additional block
+  storage from a running instance.
+  cli=my-project detach-volume <instance> <volume>
   driver-slow-driver=complete
   driver-fast-driver=complete
 
