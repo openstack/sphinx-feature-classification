@@ -5,8 +5,8 @@ Usage
 Sphinx Configuration
 ====================
 
-To use the extension, add ``'sphinx-feature-classification'`` to the
-``extensions`` list in the ``conf.py`` file in your Sphinx project.
+To use the extension, add ``'sphinx_feature_classification.support_matrix'`` to
+the ``extensions`` list in the ``conf.py`` file in your Sphinx project.
 
 Documenting Your Drivers
 ========================
