@@ -49,8 +49,8 @@ Documenting Your Drivers
   notes=The attach volume operation provides a means to hotplug
   additional block storage to a running instance.
   cli=my-project attach-volume <instance> <volume>
-  driver-slow-driver=complete
-  driver-fast-driver=complete
+  driver.slow-driver=complete
+  driver.fast-driver=complete
 
   [operation.detach-volume]
   title=Detach block volume from instance
@@ -58,8 +58,8 @@ Documenting Your Drivers
   notes=The detach volume operation provides a means to remove additional block
   storage from a running instance.
   cli=my-project detach-volume <instance> <volume>
-  driver-slow-driver=complete
-  driver-fast-driver=complete
+  driver.slow-driver=complete
+  driver.fast-driver=complete
 
 The 'status' field takes possible values
 
