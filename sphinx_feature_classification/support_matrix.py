@@ -264,8 +264,7 @@ class Directive(rst.Directive):
         summary_head.append(header)
 
         # then one column for each backend driver
-        impls = matrix.drivers.keys()
-        impls.sort()
+        impls = sorted(matrix.drivers)
         for key in impls:
             driver = matrix.drivers[key]
             implcol = nodes.entry()
@@ -296,8 +295,7 @@ class Directive(rst.Directive):
                 classes=["sp_feature_" + feature.status]))
 
             # and then one column for each backend driver
-            impls = matrix.drivers.keys()
-            impls.sort()
+            impls = sorted(matrix.drivers)
             for key in impls:
                 impl = feature.implementations[key]
                 impl_col = nodes.entry()
