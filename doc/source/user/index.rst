@@ -152,7 +152,8 @@ for every driver defined earlier in the file.
   :Mandatory: No
 
   Additional information about the implementation of this feature in driver
-  ``XXX``.
+  ``XXX``. While this is optional, it is highly recommended for implementations
+  in the ``partial`` state.
 
 For example:
 
@@ -175,6 +176,8 @@ For example:
        block storage from a running instance.
    cli=my-project detach-volume <instance> <volume>
    driver.slow-driver=complete
+   driver-notes.slow-driver=Works without issue if instance is off. When
+       hotplugging, requires version foo of the driver.
    driver.fast-driver=complete
 
 Notice that a driver is only required to implement detach-volume if they
@@ -213,4 +216,6 @@ This is simply the combined example from above.
        block storage from a running instance.
    cli=my-project detach-volume <instance> <volume>
    driver.slow-driver=complete
+   driver-notes.slow-driver=Works without issue if instance is off. When
+       hotplugging, requires version foo of the driver.
    driver.fast-driver=complete

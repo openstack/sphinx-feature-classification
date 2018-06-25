@@ -58,3 +58,13 @@ class MatrixTestCase(base.TestCase):
         fake_driver = self.matrix.drivers[key]
         self.assertEqual(title, fake_driver.title)
         self.assertEqual(link, fake_driver.link)
+
+    @ddt.unpack
+    @ddt.data({'key': 'driver.foo', 'status': 'complete',
+               'notes': None},
+              {'key': 'driver.bar', 'status': 'partial',
+               'notes': 'Requires hardware support.'})
+    def test_implementations_set(self, key, status, notes):
+        fake_implementation = self.matrix.features[0].implementations[key]
+        self.assertEqual(status, fake_implementation.status)
+        self.assertEqual(notes, fake_implementation.notes)

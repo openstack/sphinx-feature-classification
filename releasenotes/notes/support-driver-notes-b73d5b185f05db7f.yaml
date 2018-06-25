@@ -1,0 +1,14 @@
+---
+features:
+  - |
+    You can now specify ``driver-notes.XXX`` values. These are useful to
+    provide additional context for features with a status of ``partial``. For
+    example::
+
+        [operation.Cool_Feature]
+        title=Cool Feature
+        status=optional
+        notes=A pretty darn cool feature.
+        driver.foo=complete
+        driver.bar=partial
+        driver-notes.bar=Requires hardware support.

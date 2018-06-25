@@ -104,7 +104,13 @@ class Matrix(object):
                     "one of (%s)" % (option, status, section, ", ".join(
                         Implementation.STATUS_ALL)))
 
-            impl = Implementation(status)
+            option_notes = ''.join([DRIVER_NOTES_PREFIX,
+                                    option[len(DRIVER_PREFIX):]])
+            notes = None
+            if cfg.has_option(section, option_notes):
+                notes = cfg.get(section, option_notes)
+
+            impl = Implementation(status=status, notes=notes)
             feature.implementations[option] = impl
 
             return feature
@@ -160,8 +166,9 @@ class Implementation(object):
     STATUS_ALL = [STATUS_COMPLETE, STATUS_MISSING,
                   STATUS_PARTIAL, STATUS_UNKNOWN]
 
-    def __init__(self, status=STATUS_MISSING):
+    def __init__(self, status=STATUS_MISSING, notes=None):
         self.status = status
+        self.notes = notes
 
 
 STATUS_SYMBOLS = {
@@ -374,6 +381,9 @@ class Directive(rst.Directive):
                                   classes=["sp_impl_{}".format(impl.status)],
                                   ids=[key_id]),
                 ]
+
+                if impl.notes is not None:
+                    subitem.append(self._create_notes_paragraph(impl.notes))
 
                 impls.append(subitem)
 
