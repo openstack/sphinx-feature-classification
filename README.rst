@@ -7,17 +7,9 @@ Team and repository tags
 
 .. Change things from this point on
 
-===============================
+=============================
 sphinx-feature-classification
-===============================
-
-.. image:: https://img.shields.io/pypi/v/oslo.db.svg
-    :target: https://pypi.org/project/oslo.db/
-    :alt: Latest Version
-
-.. image:: https://img.shields.io/pypi/dm/oslo.db.svg
-    :target: https://pypi.org/project/oslo.db/
-    :alt: Downloads
+=============================
 
 This is a Sphinx directive that allows creating matrices of drivers a project
 contains and which features they support. The directive takes an INI file with
