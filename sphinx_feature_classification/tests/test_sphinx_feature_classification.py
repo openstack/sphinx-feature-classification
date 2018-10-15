@@ -20,11 +20,12 @@ Tests for `sphinx_feature_classification` module.
 """
 import os
 
+import ddt
+import six
+from six.moves import configparser
+
 from sphinx_feature_classification import support_matrix
 from sphinx_feature_classification.tests import base
-
-import ddt
-from six.moves import configparser
 
 
 @ddt.ddt
@@ -37,8 +38,11 @@ class MatrixTestCase(base.TestCase):
         directory = os.path.dirname(os.path.abspath(__file__))
         config_file = os.path.join(directory, 'fakes', 'support-matrix.ini')
 
+        if six.PY2:
+            cfg.read_file = cfg.readfp
+
         with open(config_file) as fp:
-            cfg.readfp(fp)
+            cfg.read_file(fp)
 
         self.matrix = support_matrix.Matrix(cfg)
 

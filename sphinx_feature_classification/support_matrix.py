@@ -23,6 +23,7 @@ import re
 
 from docutils import nodes
 from docutils.parsers import rst
+import six
 from six.moves import configparser
 
 KEY_PATTERN = re.compile("[^a-zA-Z0-9_]")
@@ -212,8 +213,14 @@ class Directive(rst.Directive):
         env = self.state.document.settings.env
         fname = self.arguments[0]
         rel_fpath, fpath = env.relfn2path(fname)
+
+        # Handle deprecation of readfp in py3 for read_file that was not
+        # available in py2.
+        if six.PY2:
+            cfg.read_file = cfg.readfp
+
         with open(fpath) as fp:
-            cfg.readfp(fp)
+            cfg.read_file(fp)
 
         # This ensures that the docs are rebuilt whenever the
         # .ini file changes
