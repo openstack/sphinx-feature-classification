@@ -278,7 +278,8 @@ class Directive(rst.Directive):
         summary_head.append(header)
 
         # then one column for each backend driver
-        impls = sorted(matrix.drivers)
+        impls = sorted(matrix.drivers,
+                       key=lambda x: matrix.drivers[x].title)
         for key in impls:
             driver = matrix.drivers[key]
             implcol = nodes.entry()
@@ -309,7 +310,6 @@ class Directive(rst.Directive):
                 classes=["sp_feature_" + feature.status]))
 
             # and then one column for each backend driver
-            impls = sorted(matrix.drivers)
             for key in impls:
                 impl = feature.implementations[key]
                 impl_col = nodes.entry()
@@ -374,7 +374,9 @@ class Directive(rst.Directive):
             para_divers.append(nodes.strong(text="Driver Support:"))
             # A sub-list giving details of each backend driver
             impls = nodes.bullet_list()
-            for key in feature.implementations:
+            keys = sorted(feature.implementations,
+                          key=lambda x: matrix.drivers[x].title)
+            for key in keys:
                 driver = matrix.drivers[key]
                 impl = feature.implementations[key]
                 subitem = nodes.list_item()
