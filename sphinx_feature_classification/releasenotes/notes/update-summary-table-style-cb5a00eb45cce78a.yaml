@@ -1,0 +1,5 @@
+---
+fixes:
+  - |
+    Fixed the summary table border not rendering and improved the table
+    font sizing.

@@ -248,7 +248,7 @@ class Directive(rst.Directive):
         """
 
         summary_title = nodes.subtitle(text="Summary")
-        summary = nodes.table()
+        summary = nodes.table(classes=["sp_feature_cells"])
         cols = len(matrix.drivers.keys())
 
         # Add two columns for the Feature and Status columns.
@@ -269,10 +269,10 @@ class Directive(rst.Directive):
         # This sets up all the column headers - two fixed
         # columns for feature name & status
         header = nodes.row()
-        blank = nodes.entry()
+        blank = nodes.entry(classes=["sp_feature_cells"])
         blank.append(nodes.emphasis(text="Feature"))
         header.append(blank)
-        blank = nodes.entry()
+        blank = nodes.entry(classes=["sp_feature_cells"])
         blank.append(nodes.emphasis(text="Status"))
         header.append(blank)
         summary_head.append(header)
@@ -282,7 +282,7 @@ class Directive(rst.Directive):
                        key=lambda x: matrix.drivers[x].title)
         for key in impls:
             driver = matrix.drivers[key]
-            implcol = nodes.entry()
+            implcol = nodes.entry(classes=["sp_feature_cells"])
             header.append(implcol)
             implcol.append(nodes.strong(text=driver.title))
 
@@ -295,7 +295,7 @@ class Directive(rst.Directive):
             feature_id = re.sub(KEY_PATTERN, "_", feature.key)
 
             # first the fixed columns for title/status
-            key_col = nodes.entry()
+            key_col = nodes.entry(classes=["sp_feature_cells"])
             item.append(key_col)
             key_ref = nodes.reference(refid=feature_id)
             key_txt = nodes.inline()
@@ -303,7 +303,7 @@ class Directive(rst.Directive):
             key_txt.append(key_ref)
             key_ref.append(nodes.strong(text=feature.title))
 
-            status_col = nodes.entry()
+            status_col = nodes.entry(classes=["sp_feature_cells"])
             item.append(status_col)
             status_col.append(nodes.inline(
                 text=feature.status,
@@ -312,7 +312,7 @@ class Directive(rst.Directive):
             # and then one column for each backend driver
             for key in impls:
                 impl = feature.implementations[key]
-                impl_col = nodes.entry()
+                impl_col = nodes.entry(classes=["sp_feature_cells"])
                 item.append(impl_col)
 
                 key_id = re.sub(KEY_PATTERN, "_",

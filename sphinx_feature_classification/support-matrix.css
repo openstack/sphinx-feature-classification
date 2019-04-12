@@ -1,6 +1,10 @@
-
 .sp_feature_required {
     font-weight: bold;
+}
+
+.sp_feature_cells {
+    border: solid 1px black;
+    text-align: center;
 }
 
 .sp_impl_complete {
@@ -24,7 +28,7 @@
 }
 
 .sp_impl_summary {
-    font-size: 2em;
+    font-size: medium;
 }
 
 .sp_cli {
