@@ -284,7 +284,15 @@ class Directive(rst.Directive):
             driver = matrix.drivers[key]
             implcol = nodes.entry()
             header.append(implcol)
-            implcol.append(nodes.strong(text=driver.title))
+            if driver.link:
+                uri = driver.link
+                target_ref = nodes.reference("", refuri=uri)
+                target_txt = nodes.inline()
+                implcol.append(target_txt)
+                target_txt.append(target_ref)
+                target_ref.append(nodes.strong(text=driver.title))
+            else:
+                implcol.append(nodes.strong(text=driver.title))
 
         # We now produce the body of the table, one row for
         # each feature to report on
