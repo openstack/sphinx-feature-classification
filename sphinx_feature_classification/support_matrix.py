@@ -465,4 +465,4 @@ class Directive(rst.Directive):
 
 def setup(app):
     app.add_directive('support_matrix', Directive)
-    app.add_stylesheet('support-matrix.css')
+    app.add_css_file('support-matrix.css')

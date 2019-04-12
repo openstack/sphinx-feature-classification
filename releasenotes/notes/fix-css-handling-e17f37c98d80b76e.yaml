@@ -1,0 +1,4 @@
+---
+fixes:
+  - |
+    Updated the CSS handling to use add_css_file instead of add_stylesheet.
