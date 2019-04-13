@@ -1,0 +1,5 @@
+---
+fixes:
+  - |
+    Adds a handler to copy the CSS file into the _static directory on build.
+    Previously the CSS file was not being copied over into the built docs.

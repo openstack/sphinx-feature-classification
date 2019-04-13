@@ -19,7 +19,9 @@ It is used via a single directive in the .rst file
 
 """
 
+from os import path
 import re
+import shutil
 
 from docutils import nodes
 from docutils.parsers import rst
@@ -463,6 +465,15 @@ class Directive(rst.Directive):
         return para
 
 
+def on_build_finished(app, exc):
+    if exc is None:
+        src = path.join(path.abspath(path.dirname(__file__)),
+                        'support-matrix.css')
+        dst = path.join(app.outdir, '_static', 'support-matrix.css')
+        shutil.copyfile(src, dst)
+
+
 def setup(app):
     app.add_directive('support_matrix', Directive)
     app.add_css_file('support-matrix.css')
+    app.connect('build-finished', on_build_finished)
