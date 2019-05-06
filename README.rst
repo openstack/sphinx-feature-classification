@@ -19,5 +19,5 @@ repository.
 
 * Free software: Apache license
 * Documentation: https://docs.openstack.org/sphinx-feature-classification/latest/
-* Source: http://git.openstack.org/cgit/openstack/sphinx-feature-classification
+* Source: http://opendev.org/openstack/sphinx-feature-classification
 * Bugs: https://storyboard.openstack.org/#!/project/921
