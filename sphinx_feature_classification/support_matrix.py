@@ -21,12 +21,12 @@ It is used via a single directive in the .rst file
 
 from os import path
 import re
-import shutil
 
 from docutils import nodes
 from docutils.parsers import rst
 import six
 from six.moves import configparser
+from sphinx.util.fileutil import copy_asset
 
 KEY_PATTERN = re.compile("[^a-zA-Z0-9_]")
 DRIVER_PREFIX = "driver."
@@ -477,8 +477,8 @@ def on_build_finished(app, exc):
     if exc is None:
         src = path.join(path.abspath(path.dirname(__file__)),
                         'support-matrix.css')
-        dst = path.join(app.outdir, '_static', 'support-matrix.css')
-        shutil.copyfile(src, dst)
+        dst = path.join(app.outdir, '_static')
+        copy_asset(src, dst)
 
 
 def setup(app):

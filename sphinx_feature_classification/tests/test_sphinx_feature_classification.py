@@ -21,6 +21,7 @@ Tests for `sphinx_feature_classification` module.
 import os
 
 import ddt
+import fixtures
 import six
 from six.moves import configparser
 
@@ -72,3 +73,15 @@ class MatrixTestCase(base.TestCase):
         fake_implementation = self.matrix.features[0].implementations[key]
         self.assertEqual(status, fake_implementation.status)
         self.assertEqual(notes, fake_implementation.notes)
+
+    def test_on_build_finished(self):
+
+        class FakeApp(object):
+            outdir = self.useFixture(fixtures.TempDir()).path
+
+        app = FakeApp()
+        exc = None
+        support_matrix.on_build_finished(app, exc)
+        expected_file = os.path.join(
+            app.outdir, '_static', 'support-matrix.css')
+        self.assertTrue(os.path.isfile(expected_file))
