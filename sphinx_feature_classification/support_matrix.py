@@ -89,10 +89,16 @@ class Matrix(object):
             if cfg.has_option(section, "cli"):
                 cli = cfg.get(section, "cli")
 
+            api = None
+            if cfg.has_option(section, "api"):
+                api = cfg.get(section, "api")
+
             notes = None
             if cfg.has_option(section, "notes"):
                 notes = cfg.get(section, "notes")
-            return Feature(section, title, status, group, notes, cli)
+            return Feature(
+                section, title,
+                status=status, group=group, notes=notes, cli=cli, api=api)
 
         def _process_implementation(section, option, feature):
             if option not in self.drivers:

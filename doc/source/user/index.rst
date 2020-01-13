@@ -130,6 +130,11 @@ following options:
 
   A sample CLI command that can be used to utilize the feature.
 
+``api``
+  :Mandatory: No
+
+  The alias for this feature in the API.
+
 In addition, there are some driver specific options that should be repeated
 for every driver defined earlier in the file.
 
@@ -166,6 +171,7 @@ For example:
    notes=The attach volume operation provides a means to hotplug additional
        block storage to a running instance.
    cli=my-project attach-volume <instance> <volume>
+   api=volume-attach
    driver.slow-driver=complete
    driver.fast-driver=complete
 
@@ -175,6 +181,7 @@ For example:
    notes=The detach volume operation provides a means to remove additional
        block storage from a running instance.
    cli=my-project detach-volume <instance> <volume>
+   api=volume-detach
    driver.slow-driver=complete
    driver-notes.slow-driver=Works without issue if instance is off. When
        hotplugging, requires version foo of the driver.
@@ -206,6 +213,7 @@ This is simply the combined example from above.
    notes=The attach volume operation provides a means to hotplug additional
        block storage to a running instance.
    cli=my-project attach-volume <instance> <volume>
+   api=volume-attach
    driver.slow-driver=complete
    driver.fast-driver=complete
 
@@ -215,6 +223,7 @@ This is simply the combined example from above.
    notes=The detach volume operation provides a means to remove additional
        block storage from a running instance.
    cli=my-project detach-volume <instance> <volume>
+   api=volume-detach
    driver.slow-driver=complete
    driver-notes.slow-driver=Works without issue if instance is off. When
        hotplugging, requires version foo of the driver.

@@ -51,6 +51,8 @@ class MatrixTestCase(base.TestCase):
         fake_feature = self.matrix.features[0]
         self.assertEqual('Cool Feature', fake_feature.title)
         self.assertEqual('optional', fake_feature.status)
+        self.assertEqual('openstack get coolness *', fake_feature.cli)
+        self.assertEqual('get-coolness', fake_feature.api)
         self.assertEqual('A pretty darn cool feature.',
                          fake_feature.notes)
 

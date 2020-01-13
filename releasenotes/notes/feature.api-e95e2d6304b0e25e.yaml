@@ -1,0 +1,4 @@
+---
+features:
+  - |
+    Added support for ``api`` in the feature section for an ``operation``.
