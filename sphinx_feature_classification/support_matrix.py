@@ -75,7 +75,7 @@ class Matrix(object):
             if cfg.has_option(section, "status"):
                 # The value is a string "status(group)" where
                 # the 'group' part is optional
-                status, group = re.match('^([^(]+)(?:\(([^)]+)\))?$',
+                status, group = re.match(r'^([^(]+)(?:\(([^)]+)\))?$',
                                          cfg.get(section, "status")).groups()
 
                 if status not in Feature.STATUS_ALL:
