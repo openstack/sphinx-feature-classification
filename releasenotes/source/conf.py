@@ -29,6 +29,11 @@ master_doc = 'index'
 project = u'sphinx_feature_classification Release Notes'
 copyright = u'2016, OpenStack Foundation'
 
+# openstackdocstheme options
+openstackdocs_repo_name = 'openstack/sphinx-feature-classification'
+openstackdocs_auto_name = False
+openstackdocs_use_storyboard = True
+
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
@@ -40,7 +45,7 @@ release = ''
 version = ''
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = 'native'
 
 
 # -- Options for HTML output ----------------------------------------------
