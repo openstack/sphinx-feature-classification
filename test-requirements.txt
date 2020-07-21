@@ -9,3 +9,4 @@ python-subunit>=0.0.18 # Apache-2.0/BSD
 sphinx>=2.0.0,!=2.1.0 # BSD
 testrepository>=0.0.18  # Apache-2.0/BSD
 testtools>=1.4.0 # MIT
+pre-commit>=2.6.0 # MIT
