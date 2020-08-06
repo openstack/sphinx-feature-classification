@@ -491,3 +491,7 @@ def setup(app):
     app.add_directive('support_matrix', Directive)
     app.add_css_file('support-matrix.css')
     app.connect('build-finished', on_build_finished)
+    return {
+        'parallel_read_safe': True,
+        'parallel_write_safe': True,
+    }
