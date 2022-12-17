@@ -18,12 +18,11 @@ test_sphinx_feature_classification
 
 Tests for `sphinx_feature_classification` module.
 """
+import configparser
 import os
 
 import ddt
 import fixtures
-import six
-from six.moves import configparser
 
 from sphinx_feature_classification import support_matrix
 from sphinx_feature_classification.tests import base
@@ -38,9 +37,6 @@ class MatrixTestCase(base.TestCase):
         cfg = configparser.ConfigParser()
         directory = os.path.dirname(os.path.abspath(__file__))
         config_file = os.path.join(directory, 'fakes', 'support-matrix.ini')
-
-        if six.PY2:
-            cfg.read_file = cfg.readfp
 
         with open(config_file) as fp:
             cfg.read_file(fp)
