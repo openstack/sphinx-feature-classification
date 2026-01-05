@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License. You may obtain
 # a copy of the License at
@@ -18,6 +16,7 @@ test_sphinx_feature_classification
 
 Tests for `sphinx_feature_classification` module.
 """
+
 import configparser
 import os
 
@@ -30,9 +29,8 @@ from sphinx_feature_classification.tests import base
 
 @ddt.ddt
 class MatrixTestCase(base.TestCase):
-
     def setUp(self):
-        super(MatrixTestCase, self).setUp()
+        super().setUp()
 
         cfg = configparser.ConfigParser()
         directory = os.path.dirname(os.path.abspath(__file__))
@@ -49,37 +47,48 @@ class MatrixTestCase(base.TestCase):
         self.assertEqual('optional', fake_feature.status)
         self.assertEqual('openstack get coolness *', fake_feature.cli)
         self.assertEqual('get-coolness', fake_feature.api)
-        self.assertEqual('A pretty darn cool feature.',
-                         fake_feature.notes)
+        self.assertEqual('A pretty darn cool feature.', fake_feature.notes)
 
     @ddt.unpack
-    @ddt.data({'key': 'driver.foo', 'title': 'Foo Driver',
-               'link': 'https://docs.openstack.org'},
-              {'key': 'driver.bar', 'title': 'Bar Driver',
-               'link': 'https://docs.openstack.org'})
+    @ddt.data(
+        {
+            'key': 'driver.foo',
+            'title': 'Foo Driver',
+            'link': 'https://docs.openstack.org',
+        },
+        {
+            'key': 'driver.bar',
+            'title': 'Bar Driver',
+            'link': 'https://docs.openstack.org',
+        },
+    )
     def test_drivers_set(self, key, title, link):
         fake_driver = self.matrix.drivers[key]
         self.assertEqual(title, fake_driver.title)
         self.assertEqual(link, fake_driver.link)
 
     @ddt.unpack
-    @ddt.data({'key': 'driver.foo', 'status': 'complete',
-               'notes': None},
-              {'key': 'driver.bar', 'status': 'partial',
-               'notes': 'Requires hardware support.'})
+    @ddt.data(
+        {'key': 'driver.foo', 'status': 'complete', 'notes': None},
+        {
+            'key': 'driver.bar',
+            'status': 'partial',
+            'notes': 'Requires hardware support.',
+        },
+    )
     def test_implementations_set(self, key, status, notes):
         fake_implementation = self.matrix.features[0].implementations[key]
         self.assertEqual(status, fake_implementation.status)
         self.assertEqual(notes, fake_implementation.notes)
 
     def test_on_build_finished(self):
-
-        class FakeApp(object):
+        class FakeApp:
             outdir = self.useFixture(fixtures.TempDir()).path
 
         app = FakeApp()
         exc = None
         support_matrix.on_build_finished(app, exc)
         expected_file = os.path.join(
-            app.outdir, '_static', 'support-matrix.css')
+            app.outdir, '_static', 'support-matrix.css'
+        )
         self.assertTrue(os.path.isfile(expected_file))

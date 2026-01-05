@@ -18,6 +18,7 @@ It is used via a single directive in the .rst file
   .. support_matrix::
 
 """
+
 import configparser
 from os import path
 import re
@@ -32,7 +33,7 @@ FEATURE_PREFIX = 'operation.'
 DRIVER_NOTES_PREFIX = "driver-notes."
 
 
-class Matrix(object):
+class Matrix:
     """Represents the entire support matrix for project drivers"""
 
     def __init__(self, cfg):
@@ -64,7 +65,8 @@ class Matrix(object):
         def _process_feature(section):
             if not cfg.has_option(section, "title"):
                 raise Exception(
-                    "'title' option missing in '[%s]' section" % section)
+                    f"'title' option missing in '[{section}]' section"
+                )
 
             title = cfg.get(section, "title")
             status = Feature.STATUS_OPTIONAL
@@ -73,15 +75,17 @@ class Matrix(object):
             if cfg.has_option(section, "status"):
                 # The value is a string "status(group)" where
                 # the 'group' part is optional
-                status, group = re.match(r'^([^(]+)(?:\(([^)]+)\))?$',
-                                         cfg.get(section, "status")).groups()
+                status, group = re.match(
+                    r'^([^(]+)(?:\(([^)]+)\))?$', cfg.get(section, "status")
+                ).groups()
 
                 if status not in Feature.STATUS_ALL:
                     raise ValueError(
-                        "'status' option value '%s' in ['%s']"
-                        "section must be one of (%s)" %
-                        (status, section,
-                         ", ".join(Feature.STATUS_ALL)))
+                        "'status' option value '{}' in ['{}']"
+                        "section must be one of ({})".format(
+                            status, section, ", ".join(Feature.STATUS_ALL)
+                        )
+                    )
 
             cli = []
             if cfg.has_option(section, "cli"):
@@ -95,24 +99,36 @@ class Matrix(object):
             if cfg.has_option(section, "notes"):
                 notes = cfg.get(section, "notes")
             return Feature(
-                section, title,
-                status=status, group=group, notes=notes, cli=cli, api=api)
+                section,
+                title,
+                status=status,
+                group=group,
+                notes=notes,
+                cli=cli,
+                api=api,
+            )
 
         def _process_implementation(section, option, feature):
             if option not in self.drivers:
                 raise Exception(
-                    "'%s' section is not declared in the "
-                    "INI file." % (option))
+                    f"'{option}' section is not declared in the INI file."
+                )
 
             status = cfg.get(section, option)
             if status not in Implementation.STATUS_ALL:
                 raise ValueError(
-                    "%s is set to %s in '[%s]' section but must be "
-                    "one of (%s)" % (option, status, section, ", ".join(
-                        Implementation.STATUS_ALL)))
+                    "{} is set to {} in '[{}]' section but must be "
+                    "one of ({})".format(
+                        option,
+                        status,
+                        section,
+                        ", ".join(Implementation.STATUS_ALL),
+                    )
+                )
 
-            option_notes = ''.join([DRIVER_NOTES_PREFIX,
-                                    option[len(DRIVER_PREFIX):]])
+            option_notes = ''.join(
+                [DRIVER_NOTES_PREFIX, option[len(DRIVER_PREFIX) :]]
+            )
             notes = None
             if cfg.has_option(section, option_notes):
                 notes = cfg.get(section, option_notes)
@@ -140,7 +156,7 @@ class Matrix(object):
         return features
 
 
-class Feature(object):
+class Feature:
     STATUS_CHOICE = "choice"
     STATUS_CONDITION = "condition"
     STATUS_MANDATORY = "mandatory"
@@ -148,11 +164,25 @@ class Feature(object):
     STATUS_MATURE = "mature"
     STATUS_IMMATURE = "immature"
 
-    STATUS_ALL = [STATUS_MANDATORY, STATUS_OPTIONAL, STATUS_CHOICE,
-                  STATUS_CONDITION, STATUS_MATURE, STATUS_IMMATURE]
+    STATUS_ALL = [
+        STATUS_MANDATORY,
+        STATUS_OPTIONAL,
+        STATUS_CHOICE,
+        STATUS_CONDITION,
+        STATUS_MATURE,
+        STATUS_IMMATURE,
+    ]
 
-    def __init__(self, key, title, status=STATUS_OPTIONAL,
-                 group=None, notes=None, cli=(), api=None):
+    def __init__(
+        self,
+        key,
+        title,
+        status=STATUS_OPTIONAL,
+        group=None,
+        notes=None,
+        cli=(),
+        api=None,
+    ):
         self.key = key
         self.title = title
         self.status = status
@@ -164,14 +194,18 @@ class Feature(object):
         self.implementations = {}
 
 
-class Implementation(object):
+class Implementation:
     STATUS_COMPLETE = "complete"
     STATUS_PARTIAL = "partial"
     STATUS_MISSING = "missing"
     STATUS_UNKNOWN = "unknown"
 
-    STATUS_ALL = [STATUS_COMPLETE, STATUS_MISSING,
-                  STATUS_PARTIAL, STATUS_UNKNOWN]
+    STATUS_ALL = [
+        STATUS_COMPLETE,
+        STATUS_MISSING,
+        STATUS_PARTIAL,
+        STATUS_UNKNOWN,
+    ]
 
     def __init__(self, status=STATUS_MISSING, notes=None):
         self.status = status
@@ -179,14 +213,14 @@ class Implementation(object):
 
 
 STATUS_SYMBOLS = {
-    Implementation.STATUS_COMPLETE: u"\u2714",
-    Implementation.STATUS_MISSING: u"\u2716",
-    Implementation.STATUS_PARTIAL: u"\u2714",
-    Implementation.STATUS_UNKNOWN: u"?"
+    Implementation.STATUS_COMPLETE: "\u2714",
+    Implementation.STATUS_MISSING: "\u2716",
+    Implementation.STATUS_PARTIAL: "\u2714",
+    Implementation.STATUS_UNKNOWN: "?",
 }
 
 
-class Driver(object):
+class Driver:
     def __init__(self, title, link=None):
         """Driver object.
 
@@ -198,7 +232,6 @@ class Driver(object):
 
 
 class Directive(rst.Directive):
-
     # support-matrix.ini is the arg
     required_arguments = 1
 
@@ -279,8 +312,7 @@ class Directive(rst.Directive):
         summary_head.append(header)
 
         # then one column for each backend driver
-        impls = sorted(matrix.drivers,
-                       key=lambda x: matrix.drivers[x].title)
+        impls = sorted(matrix.drivers, key=lambda x: matrix.drivers[x].title)
         for key in impls:
             driver = matrix.drivers[key]
             implcol = nodes.entry(classes=["sp_feature_cells"])
@@ -314,9 +346,12 @@ class Directive(rst.Directive):
 
             status_col = nodes.entry(classes=["sp_feature_cells"])
             item.append(status_col)
-            status_col.append(nodes.inline(
-                text=feature.status,
-                classes=["sp_feature_" + feature.status]))
+            status_col.append(
+                nodes.inline(
+                    text=feature.status,
+                    classes=["sp_feature_" + feature.status],
+                )
+            )
 
             # and then one column for each backend driver
             for key in impls:
@@ -324,8 +359,7 @@ class Directive(rst.Directive):
                 impl_col = nodes.entry(classes=["sp_feature_cells"])
                 item.append(impl_col)
 
-                key_id = re.sub(KEY_PATTERN, "_",
-                                "{}_{}".format(feature.key, key))
+                key_id = re.sub(KEY_PATTERN, "_", f"{feature.key}_{key}")
 
                 impl_ref = nodes.reference(refid=key_id)
                 impl_txt = nodes.inline()
@@ -334,9 +368,12 @@ class Directive(rst.Directive):
 
                 status = STATUS_SYMBOLS.get(impl.status, "")
 
-                impl_ref.append(nodes.literal(
-                    text=status,
-                    classes=["sp_impl_summary", "sp_impl_" + impl.status]))
+                impl_ref.append(
+                    nodes.literal(
+                        text=status,
+                        classes=["sp_impl_summary", "sp_impl_" + impl.status],
+                    )
+                )
 
             summary_body.append(item)
 
@@ -355,7 +392,7 @@ class Directive(rst.Directive):
 
             status = feature.status
             if feature.group is not None:
-                status += "({})".format(feature.group)
+                status += f"({feature.group})"
 
             feature_id = re.sub(KEY_PATTERN, "_", feature.key)
 
@@ -364,13 +401,12 @@ class Directive(rst.Directive):
 
             # Add maturity status
             para = nodes.paragraph()
-            para.append(nodes.strong(text="Status: {}. ".format(status)))
+            para.append(nodes.strong(text=f"Status: {status}. "))
             item.append(para)
 
             if feature.api is not None:
                 para = nodes.paragraph()
-                para.append(
-                    nodes.strong(text="API Alias: {} ".format(feature.api)))
+                para.append(nodes.strong(text=f"API Alias: {feature.api} "))
                 item.append(para)
 
             if feature.cli:
@@ -383,21 +419,23 @@ class Directive(rst.Directive):
             para_divers.append(nodes.strong(text="Driver Support:"))
             # A sub-list giving details of each backend driver
             impls = nodes.bullet_list()
-            keys = sorted(feature.implementations,
-                          key=lambda x: matrix.drivers[x].title)
+            keys = sorted(
+                feature.implementations, key=lambda x: matrix.drivers[x].title
+            )
             for key in keys:
                 driver = matrix.drivers[key]
                 impl = feature.implementations[key]
                 subitem = nodes.list_item()
 
-                key_id = re.sub(KEY_PATTERN, "_",
-                                "{}_{}".format(feature.key, key))
+                key_id = re.sub(KEY_PATTERN, "_", f"{feature.key}_{key}")
 
                 subitem += [
-                    nodes.strong(text="{}: ".format(driver.title)),
-                    nodes.literal(text=impl.status,
-                                  classes=["sp_impl_{}".format(impl.status)],
-                                  ids=[key_id]),
+                    nodes.strong(text=f"{driver.title}: "),
+                    nodes.literal(
+                        text=impl.status,
+                        classes=[f"sp_impl_{impl.status}"],
+                        ids=[key_id],
+                    ),
                 ]
 
                 if impl.notes is not None:
@@ -462,7 +500,7 @@ class Directive(rst.Directive):
             if link_end_idx == -1:
                 # In case the notes end with a link without a blank
                 link_end_idx = len(notes)
-            uri = notes[link_idx:link_end_idx + 1]
+            uri = notes[link_idx : link_end_idx + 1]
             para.append(nodes.reference("", uri, refuri=uri))
             start_idx = link_end_idx + 1
 
@@ -474,8 +512,9 @@ class Directive(rst.Directive):
 
 def on_build_finished(app, exc):
     if exc is None:
-        src = path.join(path.abspath(path.dirname(__file__)),
-                        'support-matrix.css')
+        src = path.join(
+            path.abspath(path.dirname(__file__)), 'support-matrix.css'
+        )
         dst = path.join(app.outdir, '_static')
         copy_asset(src, dst)
 
