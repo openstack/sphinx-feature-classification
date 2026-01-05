@@ -87,7 +87,7 @@ class MatrixTestCase(base.TestCase):
 
         app = FakeApp()
         exc = None
-        support_matrix.on_build_finished(app, exc)
+        support_matrix.on_build_finished(app, exc)  # type: ignore
         expected_file = os.path.join(
             app.outdir, '_static', 'support-matrix.css'
         )

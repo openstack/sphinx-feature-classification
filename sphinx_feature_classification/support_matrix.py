@@ -22,9 +22,11 @@ It is used via a single directive in the .rst file
 import configparser
 from os import path
 import re
+from typing import Any
 
 from docutils import nodes
 from docutils.parsers import rst
+import sphinx.application
 from sphinx.util.fileutil import copy_asset
 
 KEY_PATTERN = re.compile("[^a-zA-Z0-9_]")
@@ -36,12 +38,12 @@ DRIVER_NOTES_PREFIX = "driver-notes."
 class Matrix:
     """Represents the entire support matrix for project drivers"""
 
-    def __init__(self, cfg):
+    def __init__(self, cfg: configparser.ConfigParser) -> None:
         self.drivers = self._set_drivers(cfg)
         self.features = self._set_features(cfg)
 
     @staticmethod
-    def _set_drivers(cfg):
+    def _set_drivers(cfg: configparser.ConfigParser) -> 'dict[str, Driver]':
         drivers = {}
 
         for section in cfg.sections():
@@ -59,10 +61,10 @@ class Matrix:
 
         return drivers
 
-    def _set_features(self, cfg):
+    def _set_features(self, cfg: configparser.ConfigParser) -> list['Feature']:
         features = []
 
-        def _process_feature(section):
+        def _process_feature(section: str) -> Feature:
             if not cfg.has_option(section, "title"):
                 raise Exception(
                     f"'title' option missing in '[{section}]' section"
@@ -75,9 +77,17 @@ class Matrix:
             if cfg.has_option(section, "status"):
                 # The value is a string "status(group)" where
                 # the 'group' part is optional
-                status, group = re.match(
+                match = re.match(
                     r'^([^(]+)(?:\(([^)]+)\))?$', cfg.get(section, "status")
-                ).groups()
+                )
+                if match is None:
+                    raise ValueError(
+                        "Invalid 'status': {}".format(
+                            cfg.get(section, "status")
+                        )
+                    )
+
+                status, group = match.groups()
 
                 if status not in Feature.STATUS_ALL:
                     raise ValueError(
@@ -87,7 +97,7 @@ class Matrix:
                         )
                     )
 
-            cli = []
+            cli = None
             if cfg.has_option(section, "cli"):
                 cli = cfg.get(section, "cli")
 
@@ -98,6 +108,7 @@ class Matrix:
             notes = None
             if cfg.has_option(section, "notes"):
                 notes = cfg.get(section, "notes")
+
             return Feature(
                 section,
                 title,
@@ -108,7 +119,9 @@ class Matrix:
                 api=api,
             )
 
-        def _process_implementation(section, option, feature):
+        def _process_implementation(
+            section: str, option: str, feature: 'Feature'
+        ) -> 'Feature':
             if option not in self.drivers:
                 raise Exception(
                     f"'{option}' section is not declared in the INI file."
@@ -175,14 +188,14 @@ class Feature:
 
     def __init__(
         self,
-        key,
-        title,
-        status=STATUS_OPTIONAL,
-        group=None,
-        notes=None,
-        cli=(),
-        api=None,
-    ):
+        key: str,
+        title: str,
+        status: str = STATUS_OPTIONAL,
+        group: str | None = None,
+        notes: str | None = None,
+        cli: str | None = None,
+        api: str | None = None,
+    ) -> None:
         self.key = key
         self.title = title
         self.status = status
@@ -191,7 +204,7 @@ class Feature:
         self.cli = cli
         self.api = api
 
-        self.implementations = {}
+        self.implementations: dict[str, Implementation] = {}
 
 
 class Implementation:
@@ -207,7 +220,9 @@ class Implementation:
         STATUS_UNKNOWN,
     ]
 
-    def __init__(self, status=STATUS_MISSING, notes=None):
+    def __init__(
+        self, status: str = STATUS_MISSING, notes: str | None = None
+    ) -> None:
         self.status = status
         self.notes = notes
 
@@ -221,7 +236,7 @@ STATUS_SYMBOLS = {
 
 
 class Driver:
-    def __init__(self, title, link=None):
+    def __init__(self, title: str, link: str | None = None) -> None:
         """Driver object.
 
         :param title: Human readable name for plugin
@@ -235,11 +250,11 @@ class Directive(rst.Directive):
     # support-matrix.ini is the arg
     required_arguments = 1
 
-    def run(self):
+    def run(self) -> list[nodes.Element]:
         matrix = self._load_support_matrix()
         return self._build_markup(matrix)
 
-    def _load_support_matrix(self):
+    def _load_support_matrix(self) -> Matrix:
         """Parse support-matrix.ini file.
 
         Reads the support-matrix.ini file and populates an instance of the
@@ -263,16 +278,16 @@ class Directive(rst.Directive):
         matrix = Matrix(cfg)
         return matrix
 
-    def _build_markup(self, matrix):
+    def _build_markup(self, matrix: Matrix) -> list[nodes.Element]:
         """Constructs the docutils content for the support matrix."""
-        content = []
+        content: list[nodes.Element] = []
         self._build_summary(matrix, content)
         self._build_details(matrix, content)
         self._build_notes(content)
         return content
 
     @staticmethod
-    def _build_summary(matrix, content):
+    def _build_summary(matrix: Matrix, content: list[nodes.Element]) -> None:
         """Constructs the content for the summary of the support matrix.
 
         The summary consists of a giant table, with one row
@@ -377,7 +392,9 @@ class Directive(rst.Directive):
 
             summary_body.append(item)
 
-    def _build_details(self, matrix, content):
+    def _build_details(
+        self, matrix: Matrix, content: list[nodes.Element]
+    ) -> None:
         """Constructs the content for the details of the support matrix."""
 
         details_title = nodes.subtitle(text="Details")
@@ -448,7 +465,7 @@ class Directive(rst.Directive):
             details.append(item)
 
     @staticmethod
-    def _build_notes(content):
+    def _build_notes(content: list[nodes.Element]) -> None:
         """Constructs a list of notes content for the support matrix.
 
         This is generated as a bullet list.
@@ -465,7 +482,7 @@ class Directive(rst.Directive):
             notes.append(item)
 
     @staticmethod
-    def _create_cli_paragraph(feature):
+    def _create_cli_paragraph(feature: Feature) -> nodes.paragraph:
         """Create a paragraph which represents the CLI commands of the feature
 
         The paragraph will have a bullet list of CLI commands.
@@ -473,15 +490,16 @@ class Directive(rst.Directive):
         para = nodes.paragraph()
         para.append(nodes.strong(text="CLI commands:"))
         commands = nodes.bullet_list()
-        for c in feature.cli.split(";"):
-            cli_command = nodes.list_item()
-            cli_command += nodes.literal(text=c, classes=["sp_cli"])
-            commands.append(cli_command)
+        if feature.cli:
+            for c in feature.cli.split(";"):
+                cli_command = nodes.list_item()
+                cli_command += nodes.literal(text=c, classes=["sp_cli"])
+                commands.append(cli_command)
         para.append(commands)
         return para
 
     @staticmethod
-    def _create_notes_paragraph(notes):
+    def _create_notes_paragraph(notes: str) -> nodes.paragraph:
         """Constructs a paragraph which represents the implementation notes
 
         The paragraph consists of text and clickable URL nodes if links were
@@ -510,7 +528,9 @@ class Directive(rst.Directive):
         return para
 
 
-def on_build_finished(app, exc):
+def on_build_finished(
+    app: sphinx.application.Sphinx, exc: BaseException | None
+) -> None:
     if exc is None:
         src = path.join(
             path.abspath(path.dirname(__file__)), 'support-matrix.css'
@@ -519,7 +539,7 @@ def on_build_finished(app, exc):
         copy_asset(src, dst)
 
 
-def setup(app):
+def setup(app: sphinx.application.Sphinx) -> dict[str, Any]:
     app.add_directive('support_matrix', Directive)
     app.add_css_file('support-matrix.css')
     app.connect('build-finished', on_build_finished)
