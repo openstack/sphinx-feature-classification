@@ -10,9 +10,28 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+from typing import cast
+import warnings
+
 import pbr.version
 
 
-__version__ = pbr.version.VersionInfo(
-    'sphinx_feature_classification'
-).version_string()
+def __getattr__(name: str) -> str:
+    if name == '__version__':
+        warnings.warn(
+            "Accessing sphinx_feature_classification.__version__ is "
+            "deprecated and will be removed in a future release. "
+            "Use importlib.metadata instead: "
+            "importlib.metadata.version('sphinx-feature-classification')",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return cast(
+            str,
+            pbr.version.VersionInfo(
+                'sphinx_feature_classification'
+            ).version_string(),
+        )
+    raise AttributeError(
+        f"module 'sphinx_feature_classification' has no attribute {name!r}"
+    )
